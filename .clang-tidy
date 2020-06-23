@@ -1,0 +1,17 @@
+Checks: '
+    *,
+    -cppcoreguidelines-owning-memory,
+    -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+    -modernize-use-nodiscard,
+    -modernize-use-trailing-return-type,
+    -modernize-use-default-member-init,
+    -readability-convert-member-functions-to-static,
+    -readability-uppercase-literal-suffix,
+    -fuchsia-overloaded-operator,
+    -llvm-qualified-auto,
+    -llvm-header-guard,
+    -readability-qualified-auto,
+    -performance-unnecessary-value-param,
+    -hicpp-no-array-decay,
+    -hicpp-uppercase-literal-suffix,
+'
