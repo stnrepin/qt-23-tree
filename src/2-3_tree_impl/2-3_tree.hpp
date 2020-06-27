@@ -1,5 +1,5 @@
-#ifndef ONE_TWO_TREE_HPP
-#define ONE_TWO_TREE_HPP
+#ifndef TWO_THREE_TREE_IMPL_TWO_THREE_TREE_HPP
+#define TWO_THREE_TREE_IMPL_TWO_THREE_TREE_HPP
 
 #include <initializer_list>
 #include <iostream>
@@ -194,5 +194,5 @@ private:
     TwoThreeTree::TwoThreeTreeNode* cur_;
 };
 
-#endif // !ONE_TWO_TREE_HPP
+#endif // !TWO_THREE_TREE_IMPL_TWO_THREE_TREE_HPP
 
