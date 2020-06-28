@@ -1,6 +1,11 @@
-#include "2-3_tree.hpp"
+#include <QApplication>
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
-    TwoThreeTree A, B, C, D, E; // NOLINT
-    return 0;
+#include "gui/main_window.hpp"
+
+int main(int argc, char** argv) {
+    QApplication app(argc, argv);
+    MainWindow window;
+    window.show();
+    return app.exec();
 }
+
