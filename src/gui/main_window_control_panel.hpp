@@ -19,24 +19,29 @@ class MainWindowControlPanel : public QFrame {
     Q_OBJECT
 
 public:
+    enum class Message {
+        kEmpty,
+        kUnknownErrorOccurred,
+        kInvalidKeyEntered,
+        kKeyExists,
+        kKeyNotExists,
+        kNodeAdded,
+        kNodeRemoved,
+    };
+
     explicit MainWindowControlPanel(QWidget* parent = nullptr);
     ~MainWindowControlPanel() noexcept;
+
+    void UpdateMessage(Message mes);
 
 signals:
     void AddNode(int key);
     void RemoveNode(int key);
 
 private:
-    enum class Message {
-        kInvalidKeyEntered,
-        kNodeAdded,
-        kNodeRemoved,
-    };
-
     void AddButtonClicked();
     void RemoveButtonClicked();
     std::pair<unsigned int, bool> ReadNodeKey();
-    void PrintMessage(Message mes);
 
     std::unique_ptr<Ui::MainWindowControlPanel> ui_;
 };

@@ -23,13 +23,18 @@ class MainWindow : public QMainWindow {
 
 public:
     explicit MainWindow(QWidget* parent = nullptr);
-    ~MainWindow() noexcept;
+    ~MainWindow() noexcept = default;
 
     void InitControlPanel();
     void InitCanvas();
-    void ReprintTree();
+
+private slots:
+    void AddNode(unsigned int key);
+    void RemoveNode(unsigned int key);
 
 private:
+    void ReprintTree();
+
     std::unique_ptr<Ui::MainWindow> ui_;
     TwoThreeTreeCanvas* canvas_;
     MainWindowControlPanel* control_panel_;

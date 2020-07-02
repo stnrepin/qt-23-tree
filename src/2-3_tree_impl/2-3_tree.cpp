@@ -1,6 +1,6 @@
 #include "2-3_tree_impl/2-3_tree.hpp"
 
-#include <exception>
+#include "2-3_tree_impl/exceptions.hpp"
 
 namespace two_three_tree {
 
@@ -70,10 +70,10 @@ void TwoThreeTree::Add(unsigned int key) {
     // root_ -- фиктивная вершина, см. комментарий в определении класса.
     //
     auto* n = new TwoThreeTreeNode(key);
-    elems_.push_back(n);
     if (root_->right() == nullptr) {
         ++size_;
         root_->set_right(n);
+        elems_.push_back(n);
         return;
     }
 
@@ -96,10 +96,8 @@ void TwoThreeTree::Add(unsigned int key) {
             }
         }
         else {
-            // Ничего не делаем, если ключи повторяются.
-            // Память не течет, так как elems_ хранит все указатели,
-            // и именно он используется в деструкторе.
-            ++size_;
+            delete n;
+            throw KeyExistsException();
             return;
         }
 
@@ -107,6 +105,7 @@ void TwoThreeTree::Add(unsigned int key) {
     }
 
     BalanceFromNode(n, &path);
+    elems_.push_back(n);
     ++size_;
 }
 
@@ -223,7 +222,7 @@ void TwoThreeTree::Remove(unsigned int key) {
     }
 
     if (cur == nullptr) {
-        return;
+        throw KeyNotExistsException();
     }
 
     if (cur->left() == nullptr && cur->right() == nullptr) {

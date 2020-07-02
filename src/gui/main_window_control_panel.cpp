@@ -8,41 +8,43 @@ MainWindowControlPanel::MainWindowControlPanel(QWidget* parent)
 
     connect(ui_->add_button, &QPushButton::clicked, this, &MainWindowControlPanel::AddButtonClicked);
     connect(ui_->remove_button, &QPushButton::clicked, this, &MainWindowControlPanel::RemoveButtonClicked);
+
+    UpdateMessage(Message::kEmpty);
 }
 
 void MainWindowControlPanel::AddButtonClicked() {
     auto [key, ok] = ReadNodeKey();
     if (ok) {
         emit AddNode(key);
-        PrintMessage(Message::kNodeAdded);
         return;
     }
-    PrintMessage(Message::kInvalidKeyEntered);
+    UpdateMessage(Message::kInvalidKeyEntered);
 }
 
 void MainWindowControlPanel::RemoveButtonClicked() {
     auto [key, ok] = ReadNodeKey();
     if (ok) {
         emit RemoveNode(key);
-        PrintMessage(Message::kNodeRemoved);
         return;
     }
-    PrintMessage(Message::kInvalidKeyEntered);
+    UpdateMessage(Message::kInvalidKeyEntered);
 }
 
-std::pair<unsigned int, bool> MainWindowControlPanel::ReadNodeKey() {
-    bool ok = false;
-    auto node_key = ui_->node_key_lineedit->text().toInt(&ok);
-    ui_->node_key_lineedit->clear();
-    if (ok && node_key >= 1) {
-        return { node_key, true };
-    }
-    return { 0, false };
-}
-
-void MainWindowControlPanel::PrintMessage(Message mes) {
+void MainWindowControlPanel::UpdateMessage(Message mes) {
     const char* text = nullptr;
     switch (mes) {
+        case Message::kEmpty:
+            text = "";
+            break;
+        case Message::kUnknownErrorOccurred:
+            text = "Unknown error occurred";
+            break;
+        case Message::kKeyExists:
+            text = "Node key already exists";
+            break;
+        case Message::kKeyNotExists:
+            text = "Node key is not exists";
+            break;
         case Message::kInvalidKeyEntered:
             text = "Invalid node key value (should be positive integer)";
             break;
@@ -54,6 +56,16 @@ void MainWindowControlPanel::PrintMessage(Message mes) {
             break;
     }
     ui_->message_label->setText(text);
+}
+
+std::pair<unsigned int, bool> MainWindowControlPanel::ReadNodeKey() {
+    bool ok = false;
+    auto node_key = ui_->node_key_lineedit->text().toInt(&ok);
+    ui_->node_key_lineedit->clear();
+    if (ok && node_key >= 1) {
+        return { node_key, true };
+    }
+    return { 0, false };
 }
 
 MainWindowControlPanel::~MainWindowControlPanel() noexcept {
