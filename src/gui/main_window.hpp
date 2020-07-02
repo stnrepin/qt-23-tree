@@ -33,7 +33,7 @@ private:
     std::unique_ptr<Ui::MainWindow> ui_;
     TwoThreeTreeCanvas* canvas_;
     MainWindowControlPanel* control_panel_;
-    TwoThreeTree tree_;
+    two_three_tree::TwoThreeTree tree_;
 };
 
 #endif // !GUI_MAIN_WINDOW_HPP

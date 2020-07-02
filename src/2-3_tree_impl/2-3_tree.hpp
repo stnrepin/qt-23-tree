@@ -8,6 +8,8 @@
 #include <utility>
 #include <vector>
 
+namespace two_three_tree {
+
 class TwoThreeTree {
 public:
     using value_type = unsigned int;
@@ -193,6 +195,9 @@ private:
     std::stack<TwoThreeTree::TwoThreeTreeNode*> elems_;
     TwoThreeTree::TwoThreeTreeNode* cur_;
 };
+
+
+} // namespace two_three_tree
 
 #endif // !TWO_THREE_TREE_IMPL_TWO_THREE_TREE_HPP
 

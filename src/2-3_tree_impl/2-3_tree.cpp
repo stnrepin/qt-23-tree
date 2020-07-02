@@ -1,6 +1,8 @@
-#include "2-3_tree.hpp"
+#include "2-3_tree_impl/2-3_tree.hpp"
 
 #include <exception>
+
+namespace two_three_tree {
 
 TwoThreeTree::TwoThreeTree() {
     size_ = 0;
@@ -386,4 +388,6 @@ TwoThreeTree::iterator& TwoThreeTree::iterator::operator++() {
     DoStep();
     return *this;
 }
+
+} // namespace two_three_tree
 
