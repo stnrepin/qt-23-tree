@@ -35,6 +35,7 @@ public:
     void Add(unsigned int key);
     void Remove(unsigned int key);
     bool Find(unsigned int key) const;
+    int GetDepth() const;
 
     size_t size() const { return size_; };
     iterator begin() const;

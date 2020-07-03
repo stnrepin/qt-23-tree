@@ -1,102 +1,92 @@
 #include "gui/two_three_tree_canvas.hpp"
 
 #include <cmath>
-#include <iostream>
+
+#include <QBrush>
+#include <QFont>
+#include <QRectF>
+#include <QPen>
+#include <QPointF>
+#include <QString>
+#include <QTextOption>
 
 TwoThreeTreeCanvas::TwoThreeTreeCanvas(QWidget* parent)
     : QWidget(parent), ui_(std::make_unique<Ui::TwoThreeTreeCanvas>()), tree_(nullptr)
 {
     ui_->setupUi(this);
-    pm_ = QPixmap(width()+300, height()+300);
+    pm_ = QPixmap(width(), height());
 }
 
-void TwoThreeTreeCanvas::PrintTree(const two_three_tree::TwoThreeTree& tree) {
-    QPainter painter(&pm_);
+void TwoThreeTreeCanvas::PrintTree() {
+    PrintTree(tree_);
+}
 
-    if (tree.size() == 0) {
+void TwoThreeTreeCanvas::PrintTree(const two_three_tree::TwoThreeTree* tree) {
+    tree_ = tree;
+    if (tree_ == nullptr || tree_->size() == 0) {
+        Clear();
         return;
     }
 
-    int tree_height = 0;
-    std::queue<two_three_tree::TwoThreeTree::TwoThreeTreeNode*> q;
-    two_three_tree::TwoThreeTree::TwoThreeTreeNode* node = tree.root()->left();
-    q.push(node);
-    while (true) {
-        auto q_size = q.size();
-        if (q_size == 0) {
-            break;
-        }
+    QPainter painter(&pm_);
+    painter.setFont(QFont("times", 16));
+    painter.setPen(QPen(Qt::black, 4));
+    painter.setBrush(QBrush(Qt::white));
 
-        ++tree_height; // depth
+    auto tree_depth = tree_->GetDepth();
 
-        while (q_size > 0) {
-            node = q.front();
-            q.pop();
-            if (node->left() != nullptr) {
-                q.push(node->left());
-            }
-            if (node->right() != nullptr) {
-                q.push(node->right());
-            }
-            --q_size;
-        }
-    }
-
-    std::stack<std::tuple<two_three_tree::TwoThreeTree::TwoThreeTreeNode*, int, int>> s;
-    /*two_three_tree::TwoThreeTree::TwoThreeTreeNode**/ node = tree.root()->left();
-    s.push({ node, 1, 0 });
+    // Node, Index, Depth, IsLeft
+    std::stack<
+        std::tuple<
+            two_three_tree::TwoThreeTree::TwoThreeTreeNode*, int, int, bool
+        >
+    > s;
+    auto* node = tree_->root()->left();
+    auto* head = node;
+    s.push({ node, 1, 0, false });
     while (!s.empty()) {
-        auto [node, index, depth] = s.top();
-        s.pop();
+        auto [node, index, depth, is_left] = s.top();
 
-        auto node_text = QString::number(node->key());
-        auto [x, y] = CalculateNodePosition(index, depth, tree_height);
-        painter.drawText(QRectF(x, y, 50, 50), node_text, QTextOption(Qt::AlignCenter));
+        auto is_finish_subtree = (node->right() == head || node->left() == head);
+        auto is_leaf = (node->left() == nullptr && node->right() == nullptr);
+        if (is_finish_subtree || is_leaf) {
+            s.pop();
+            auto node_text = QString::number(node->key());
+            auto [x, y] = CalculateNodePosition(index, depth, tree_depth);
 
+            if (!(index == 1 && depth == 0)) {
+                auto parent_index = is_left ? (index + 1) / 2 : index / 2;
+                auto [parent_x, parent_y] = CalculateNodePosition(
+                                                parent_index, depth - 1, tree_depth);
+                painter.drawLine(x, y, parent_x, parent_y);
+            }
+
+            painter.drawEllipse(QPointF(x, y), 20, 20);
+
+            painter.drawText(QRectF(x-20, y-20, 40, 40), node_text,
+                             QTextOption(Qt::AlignCenter));
+            head = node;
+        }
+        else {
         if (node->right() != nullptr) {
-            s.push({ node->right(), index * 2 - 1, depth + 1 });
+            s.push({ node->right(), index * 2, depth + 1, false });
         }
         if (node->left() != nullptr) {
-            s.push({ node->left(), index * 2, depth + 1 });
+            s.push({ node->left(), index * 2 - 1, depth + 1, true });
         }
     }
+  }
     update();
-/*
-    QPainter paint_node(this);
-    std::vector<Tree::Data> nodes_data = _node->SetPositionOfNodesForVisualization();
-
-        const int size = _node->DrawingSize/2;
-        QPoint line_pos;
-        line_pos.setX(_node->start_pos.x()+size);
-        line_pos.setY(_node->start_pos.y()+size);
-        std::vector<QPoint> nodes_lines = _node->GetVectorOfLinesBetwenNodes();
-        for(const auto& a : nodes_lines){
-            paint_node.drawLine(line_pos.x(),line_pos.y(),a.x()+size,a.y()+size);
-            line_pos.setX(a.x()+size);
-            line_pos.setY(a.y()+size);
-        }
-
-        paint_node.setBrush(QBrush(QColor(Qt::green)));
-        for(const auto& a : nodes_data){
-            QPoint node_pos(a.posX,a.posY);
-
-            if(a.new_node == false){
-                paint_node.drawEllipse(a.posX,a.posY,_node->DrawingSize,_node->DrawingSize);
-            }
-            else{
-                paint_node.setBrush(QBrush(QColor(Qt::red)));
-                paint_node.drawEllipse(a.posX,a.posY,_node->DrawingSize,_node->DrawingSize);
-                paint_node.setBrush(QBrush(QColor(Qt::green)));
-            }
-
-            paint_node.drawText(QRectF(QPointF(node_pos),QSizeF(QSize(34,31))),QString::number(a.val),QTextOption(Qt::AlignCenter));
-*/
 }
 
 void TwoThreeTreeCanvas::Clear() {
-    QPainter painter(&pm_);
-    painter.eraseRect(0, 0, pm_.width(), pm_.height());
+    pm_.fill(Qt::white);
     update();
+}
+
+void TwoThreeTreeCanvas::resizeEvent(QResizeEvent* e) {
+    pm_ = QPixmap(e->size().width(), e->size().height());
+    PrintTree();
 }
 
 void TwoThreeTreeCanvas::paintEvent(QPaintEvent*) {
@@ -104,11 +94,11 @@ void TwoThreeTreeCanvas::paintEvent(QPaintEvent*) {
     painter.drawPixmap(0, 0, pm_.width(), pm_.height(), pm_);
 }
 
-std::pair<float, float> TwoThreeTreeCanvas::CalculateNodePosition(int index, int depth, int tree_depth) const {
-    std::cout << index << " " << depth << " " << tree_depth << "\n";
+std::pair<float, float> TwoThreeTreeCanvas::CalculateNodePosition(
+        int index, int depth, int tree_depth) const
+{
     auto x = index * pm_.width() / (std::pow(2, depth) + 1);
-    auto y = depth * pm_.height() / tree_depth;
-    std::cout << x << " " << y << "\n";
+    auto y = depth * pm_.height() / tree_depth + 40;
     return { x, y };
 }
 

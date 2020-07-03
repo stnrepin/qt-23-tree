@@ -1,5 +1,7 @@
 #include "2-3_tree_impl/2-3_tree.hpp"
 
+#include <queue>
+
 #include "2-3_tree_impl/exceptions.hpp"
 
 namespace two_three_tree {
@@ -305,7 +307,35 @@ bool TwoThreeTree::Find(unsigned int key) const {
     return false;
 }
 
-std::pair<TwoThreeTree::TwoThreeTreeNode*, TwoThreeTree::TwoThreeTreeNode*> 
+int TwoThreeTree::GetDepth() const {
+    int depth = 0;
+    std::queue<TwoThreeTreeNode*> q;
+    TwoThreeTreeNode* node = root_->left();
+    q.push(node);
+    while (true) {
+        auto q_size = q.size();
+        if (q_size == 0) {
+            break;
+        }
+
+        ++depth;
+
+        while (q_size > 0) {
+            node = q.front();
+            q.pop();
+            if (node->left() != nullptr) {
+                q.push(node->left());
+            }
+            if (node->right() != nullptr) {
+                q.push(node->right());
+            }
+            --q_size;
+        }
+    }
+    return depth;
+}
+
+std::pair<TwoThreeTree::TwoThreeTreeNode*, TwoThreeTree::TwoThreeTreeNode*>
 TwoThreeTree::FindMinimalFromNode(TwoThreeTreeNode* n) const {
     TwoThreeTreeNode* prev_prev = nullptr;
     TwoThreeTreeNode* prev = nullptr;

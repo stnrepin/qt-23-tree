@@ -72,6 +72,6 @@ void MainWindow::RemoveNode(unsigned int key) {
 
 void MainWindow::ReprintTree() {
     canvas_->Clear();
-    canvas_->PrintTree(tree_);
+    canvas_->PrintTree(&tree_);
 }
 

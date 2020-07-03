@@ -7,6 +7,9 @@
 
 #include <QWidget>
 #include <QPainter>
+#include <QPixmap>
+#include <QPaintEvent>
+#include <QResizeEvent>
 
 #include "2-3_tree_impl/2-3_tree.hpp"
 
@@ -27,13 +30,16 @@ public:
 
     void Clear();
 
-    void PrintTree(const two_three_tree::TwoThreeTree& tree);
+    void PrintTree();
+    void PrintTree(const two_three_tree::TwoThreeTree* tree);
 
 protected:
+    virtual void resizeEvent(QResizeEvent *event) override;
     virtual void paintEvent(QPaintEvent *event) override;
 
 private:
-    std::pair<float, float> CalculateNodePosition(int index, int depth, int tree_depth) const;
+    std::pair<float, float>
+        CalculateNodePosition(int index, int depth, int tree_depth) const;
 
     std::unique_ptr<Ui::TwoThreeTreeCanvas> ui_;
     QPixmap pm_;

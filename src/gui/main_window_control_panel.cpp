@@ -43,7 +43,7 @@ void MainWindowControlPanel::UpdateMessage(Message mes) {
             text = "Node key already exists";
             break;
         case Message::kKeyNotExists:
-            text = "Node key is not exists";
+            text = "Node key does not exists";
             break;
         case Message::kInvalidKeyEntered:
             text = "Invalid node key value (should be positive integer)";
