@@ -2,9 +2,13 @@
 #define GUI_TWO_THREE_TREE_CANVAS_HPP
 
 #include <memory>
+#include <queue>
+#include <stack>
 
 #include <QWidget>
 #include <QPainter>
+
+#include "2-3_tree_impl/2-3_tree.hpp"
 
 // Include Qt generated files.
 //
@@ -19,16 +23,21 @@ class TwoThreeTreeCanvas : public QWidget {
 
 public:
     explicit TwoThreeTreeCanvas(QWidget* parent = nullptr);
-    ~TwoThreeTreeCanvas() noexcept;
+    ~TwoThreeTreeCanvas() noexcept = default;
 
-    template<typename Iter1, typename Iter2>
-    void PrintTree(Iter1 begin, Iter2 end) {
-        
-    }
+    void Clear();
+
+    void PrintTree(const two_three_tree::TwoThreeTree& tree);
+
+protected:
+    virtual void paintEvent(QPaintEvent *event) override;
 
 private:
+    std::pair<float, float> CalculateNodePosition(int index, int depth, int tree_depth) const;
+
     std::unique_ptr<Ui::TwoThreeTreeCanvas> ui_;
-    QPainter* painter_;
+    QPixmap pm_;
+    const two_three_tree::TwoThreeTree* tree_;
 };
 
 #endif // !GUI_TWO_THREE_TREE_CANVAS_HPP

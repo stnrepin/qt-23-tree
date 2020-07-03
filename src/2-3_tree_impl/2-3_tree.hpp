@@ -45,10 +45,14 @@ public:
 
     ~TwoThreeTree();
 
-private:
+//private:
     class TwoThreeTreeNode;
     class TwoThreeTreeRootNode;
 
+    // XXX
+    const TwoThreeTreeRootNode* root() const { return root_; }
+
+private:
     void BalanceFromNode(TwoThreeTreeNode* n, std::stack<TwoThreeTreeNode*>* path);
     void Remove(TwoThreeTreeNode* n, TwoThreeTreeNode* old_par);
     std::pair<TwoThreeTreeNode*, TwoThreeTreeNode*> FindMinimalFromNode(TwoThreeTreeNode* n) const;
