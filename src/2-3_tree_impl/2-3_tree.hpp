@@ -5,13 +5,21 @@
 #include <iostream>
 #include <iterator>
 #include <stack>
+#include <string>
 #include <tuple>
 #include <utility>
 #include <vector>
 
 namespace two_three_tree {
 
-class TwoThreeTree {
+class Stringable {
+public:
+    virtual std::string ToString() const = 0;
+
+    virtual ~Stringable() = default;
+};
+
+class TwoThreeTree : public Stringable {
 public:
     using value_type = unsigned int;
 
@@ -33,6 +41,8 @@ public:
         }
     }
 
+    virtual std::string ToString() const override;
+
     void Add(unsigned int key);
     void Remove(unsigned int key);
     bool Find(unsigned int key) const;
@@ -48,7 +58,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream &os, const TwoThreeTree& tree);
 
-    ~TwoThreeTree();
+    virtual ~TwoThreeTree();
 
 private:
     class TwoThreeTreeNode;

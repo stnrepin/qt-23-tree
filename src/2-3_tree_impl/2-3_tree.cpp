@@ -68,6 +68,22 @@ TwoThreeTree& TwoThreeTree::operator=(TwoThreeTree&& src) noexcept {
     return *this;
 }
 
+std::string TwoThreeTree::ToString() const {
+    std::string result("[");
+    auto i = 0u;
+    auto last_element_i = size() - 1;
+    for (auto x : *this) {
+        result += std::to_string(x);
+        if (i != last_element_i) {
+            result += ',';
+            result += ' ';
+        }
+        ++i;
+    }
+    result += ']';
+    return result;
+}
+
 void TwoThreeTree::Add(unsigned int key) {
     // root_ -- фиктивная вершина, см. комментарий в определении класса.
     //
