@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iterator>
 #include <stack>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -37,6 +38,9 @@ public:
     bool Find(unsigned int key) const;
     int GetDepth() const;
 
+    template<typename CallbackFunc>
+    void DoPostOrderTraversal(CallbackFunc f) const;
+
     size_t size() const { return size_; };
     iterator begin() const;
     iterator end() const;
@@ -46,14 +50,10 @@ public:
 
     ~TwoThreeTree();
 
-//private:
+private:
     class TwoThreeTreeNode;
     class TwoThreeTreeRootNode;
 
-    // XXX
-    const TwoThreeTreeRootNode* root() const { return root_; }
-
-private:
     void BalanceFromNode(TwoThreeTreeNode* n, std::stack<TwoThreeTreeNode*>* path);
     void Remove(TwoThreeTreeNode* n, TwoThreeTreeNode* old_par);
     std::pair<TwoThreeTreeNode*, TwoThreeTreeNode*> FindMinimalFromNode(TwoThreeTreeNode* n) const;
@@ -148,6 +148,37 @@ public:
         set_left(nullptr);
     }
 };
+
+
+template<typename CallbackFunc>
+void TwoThreeTree::DoPostOrderTraversal(CallbackFunc f) const {
+    // Node, Index, Depth, IsLeft
+    std::stack<std::tuple<TwoThreeTreeNode*, int, int, bool>> s;
+    auto* node = root_->left();
+    auto* head = node;
+    s.push({ node, 1, 0, false });
+    while (!s.empty()) {
+        auto [node, index, depth, is_left] = s.top();
+
+        auto is_finish_subtree = (node->right() == head ||
+                                    node->left() == head);
+        auto is_leaf = (node->left() == nullptr &&
+                        node->right() == nullptr);
+        if (is_finish_subtree || is_leaf) {
+            s.pop();
+            f(node->key(), index, depth, is_left);
+            head = node;
+        }
+        else {
+            if (node->right() != nullptr) {
+                s.push({ node->right(), index * 2, depth + 1, false });
+            }
+            if (node->left() != nullptr) {
+                s.push({ node->left(), index * 2 - 1, depth + 1, true });
+            }
+        }
+    }
+}
 
 class TwoThreeTree::iterator :
         public std::iterator<

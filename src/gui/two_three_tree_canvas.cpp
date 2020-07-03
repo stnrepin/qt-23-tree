@@ -10,72 +10,50 @@
 #include <QString>
 #include <QTextOption>
 
-TwoThreeTreeCanvas::TwoThreeTreeCanvas(QWidget* parent)
-    : QWidget(parent), ui_(std::make_unique<Ui::TwoThreeTreeCanvas>()), tree_(nullptr)
+TwoThreeTreeCanvas::TwoThreeTreeCanvas(const two_three_tree::TwoThreeTree* tree,
+                                       const TwoThreeTreeCanvasOptions& opt,
+                                       QWidget* parent)
+    : QWidget(parent),
+      ui_(std::make_unique<Ui::TwoThreeTreeCanvas>()),
+      pm_(width(), height()),
+      opt_(opt),
+      tree_(tree)
 {
     ui_->setupUi(this);
-    pm_ = QPixmap(width(), height());
 }
 
 void TwoThreeTreeCanvas::PrintTree() {
-    PrintTree(tree_);
-}
-
-void TwoThreeTreeCanvas::PrintTree(const two_three_tree::TwoThreeTree* tree) {
-    tree_ = tree;
     if (tree_ == nullptr || tree_->size() == 0) {
         Clear();
         return;
     }
 
     QPainter painter(&pm_);
-    painter.setFont(QFont("times", 16));
-    painter.setPen(QPen(Qt::black, 4));
+    painter.setFont(QFont("times", opt_.node_key_font_size));
+    painter.setPen(QPen(Qt::black, opt_.pen_size));
     painter.setBrush(QBrush(Qt::white));
 
     auto tree_depth = tree_->GetDepth();
 
-    // Node, Index, Depth, IsLeft
-    std::stack<
-        std::tuple<
-            two_three_tree::TwoThreeTree::TwoThreeTreeNode*, int, int, bool
-        >
-    > s;
-    auto* node = tree_->root()->left();
-    auto* head = node;
-    s.push({ node, 1, 0, false });
-    while (!s.empty()) {
-        auto [node, index, depth, is_left] = s.top();
+    auto callback = [=, &painter](auto key, auto index, auto depth, auto is_left) {
+        auto node_text = QString::number(key);
+        auto [x, y] = CalculateNodePosition(index, depth, tree_depth);
 
-        auto is_finish_subtree = (node->right() == head || node->left() == head);
-        auto is_leaf = (node->left() == nullptr && node->right() == nullptr);
-        if (is_finish_subtree || is_leaf) {
-            s.pop();
-            auto node_text = QString::number(node->key());
-            auto [x, y] = CalculateNodePosition(index, depth, tree_depth);
-
-            if (!(index == 1 && depth == 0)) {
-                auto parent_index = is_left ? (index + 1) / 2 : index / 2;
-                auto [parent_x, parent_y] = CalculateNodePosition(
-                                                parent_index, depth - 1, tree_depth);
-                painter.drawLine(x, y, parent_x, parent_y);
-            }
-
-            painter.drawEllipse(QPointF(x, y), 20, 20);
-
-            painter.drawText(QRectF(x-20, y-20, 40, 40), node_text,
-                             QTextOption(Qt::AlignCenter));
-            head = node;
+        if (!(index == 1 && depth == 0)) {
+            auto parent_index = is_left ? (index + 1) / 2 : index / 2;
+            auto [parent_x, parent_y] = CalculateNodePosition(
+                                            parent_index, depth - 1, tree_depth);
+            painter.drawLine(x, y, parent_x, parent_y);
         }
-        else {
-        if (node->right() != nullptr) {
-            s.push({ node->right(), index * 2, depth + 1, false });
-        }
-        if (node->left() != nullptr) {
-            s.push({ node->left(), index * 2 - 1, depth + 1, true });
-        }
-    }
-  }
+
+        auto r = opt_.node_ellipse_radius;
+        painter.drawEllipse(QPointF(x, y), r, r);
+
+        auto d = r * 2;
+        painter.drawText(QRectF(x-r, y-r, d, d), node_text,
+                            QTextOption(Qt::AlignCenter));
+    };
+    tree_->DoPostOrderTraversal(callback);
     update();
 }
 
@@ -98,7 +76,7 @@ std::pair<float, float> TwoThreeTreeCanvas::CalculateNodePosition(
         int index, int depth, int tree_depth) const
 {
     auto x = index * pm_.width() / (std::pow(2, depth) + 1);
-    auto y = depth * pm_.height() / tree_depth + 40;
+    auto y = depth * pm_.height() / tree_depth + opt_.canvas_padding;
     return { x, y };
 }
 

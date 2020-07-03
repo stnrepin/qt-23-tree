@@ -21,17 +21,25 @@ namespace Ui {
     class TwoThreeTreeCanvas;
 }
 
+struct TwoThreeTreeCanvasOptions {
+    int node_ellipse_radius = 20;
+    int node_key_font_size = 16;
+    int pen_size = 4;
+    int canvas_padding = 40;
+};
+
 class TwoThreeTreeCanvas : public QWidget {
     Q_OBJECT
 
 public:
-    explicit TwoThreeTreeCanvas(QWidget* parent = nullptr);
+    TwoThreeTreeCanvas(const two_three_tree::TwoThreeTree* tree,
+                                const TwoThreeTreeCanvasOptions& opt,
+                                QWidget* parent = nullptr);
     ~TwoThreeTreeCanvas() noexcept = default;
 
     void Clear();
 
     void PrintTree();
-    void PrintTree(const two_three_tree::TwoThreeTree* tree);
 
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
@@ -43,6 +51,7 @@ private:
 
     std::unique_ptr<Ui::TwoThreeTreeCanvas> ui_;
     QPixmap pm_;
+    const TwoThreeTreeCanvasOptions opt_;
     const two_three_tree::TwoThreeTree* tree_;
 };
 

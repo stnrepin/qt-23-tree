@@ -30,7 +30,8 @@ void MainWindow::InitControlPanel() {
 }
 
 void MainWindow::InitCanvas() {
-    canvas_ = new TwoThreeTreeCanvas(ui_->splitter);
+    canvas_ = new TwoThreeTreeCanvas(&tree_, TwoThreeTreeCanvasOptions(),
+                                     ui_->splitter);
     ui_->splitter->addWidget(canvas_);
 }
 
@@ -72,6 +73,6 @@ void MainWindow::RemoveNode(unsigned int key) {
 
 void MainWindow::ReprintTree() {
     canvas_->Clear();
-    canvas_->PrintTree(&tree_);
+    canvas_->PrintTree();
 }
 
