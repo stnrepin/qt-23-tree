@@ -13,15 +13,18 @@ MainWindowControlPanel::MainWindowControlPanel(QWidget* parent)
 }
 
 void MainWindowControlPanel::AddButtonClicked() {
+    ui_->node_key_lineedit->setFocus();
     auto [key, ok] = ReadNodeKey();
     if (ok) {
         emit AddNode(key);
         return;
     }
     UpdateMessage(Message::kInvalidKeyEntered);
+
 }
 
 void MainWindowControlPanel::RemoveButtonClicked() {
+    ui_->node_key_lineedit->setFocus();
     auto [key, ok] = ReadNodeKey();
     if (ok) {
         emit RemoveNode(key);
