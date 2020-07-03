@@ -62,7 +62,7 @@ std::pair<unsigned int, bool> MainWindowControlPanel::ReadNodeKey() {
     bool ok = false;
     auto node_key = ui_->node_key_lineedit->text().toInt(&ok);
     ui_->node_key_lineedit->clear();
-    if (ok && node_key >= 1) {
+    if (ok && node_key >= 1 && node_key <= 999) {
         return { node_key, true };
     }
     return { 0, false };
