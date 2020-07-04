@@ -1,3 +1,6 @@
+#ifndef TWO_THREE_TREE_IMPL_EXCEPTIONS_HPP
+#define TWO_THREE_TREE_IMPL_EXCEPTIONS_HPP
+
 #include <stdexcept>
 
 namespace two_three_tree {
@@ -19,4 +22,6 @@ public:
 };
 
 } // namespace two_three_tree
+
+#endif // !TWO_THREE_TREE_IMPL_EXCEPTIONS_HPP
 
