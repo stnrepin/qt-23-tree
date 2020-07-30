@@ -4,9 +4,9 @@
 
 #include <QBrush>
 #include <QFont>
-#include <QRectF>
 #include <QPen>
 #include <QPointF>
+#include <QRectF>
 #include <QString>
 #include <QTextOption>
 
@@ -39,7 +39,8 @@ void TwoThreeTreeCanvas::PrintTree() {
         auto node_text = QString::number(key);
         auto [x, y] = CalculateNodePosition(index, depth, tree_depth);
 
-        if (!(index == 1 && depth == 0)) {
+        auto is_root = index == 1 && depth == 0;
+        if (!is_root) {
             auto parent_index = is_left ? (index + 1) / 2 : index / 2;
             auto [parent_x, parent_y] = CalculateNodePosition(
                                             parent_index, depth - 1, tree_depth);
@@ -51,7 +52,7 @@ void TwoThreeTreeCanvas::PrintTree() {
 
         auto d = r * 2;
         painter.drawText(QRectF(x-r, y-r, d, d), node_text,
-                            QTextOption(Qt::AlignCenter));
+                         QTextOption(Qt::AlignCenter));
     };
     tree_->DoPostOrderTraversal(callback);
     update();

@@ -5,11 +5,11 @@
 #include <queue>
 #include <stack>
 
-#include <QWidget>
+#include <QPaintEvent>
 #include <QPainter>
 #include <QPixmap>
-#include <QPaintEvent>
 #include <QResizeEvent>
+#include <QWidget>
 
 #include "2-3_tree_impl/2-3_tree.hpp"
 
@@ -19,13 +19,13 @@
 
 namespace Ui {
     class TwoThreeTreeCanvas;
-}
+} // namespace Ui
 
 struct TwoThreeTreeCanvasOptions {
-    int node_ellipse_radius = 20;
-    int node_key_font_size = 16;
-    int pen_size = 4;
-    int canvas_padding = 40;
+    const int node_ellipse_radius = 20;
+    const int node_key_font_size = 16;
+    const int pen_size = 4;
+    const int canvas_padding = 40;
 };
 
 class TwoThreeTreeCanvas : public QWidget {
@@ -35,15 +35,14 @@ public:
     TwoThreeTreeCanvas(const two_three_tree::TwoThreeTree* tree,
                                 const TwoThreeTreeCanvasOptions& opt,
                                 QWidget* parent = nullptr);
-    ~TwoThreeTreeCanvas() noexcept = default;
 
     void Clear();
 
     void PrintTree();
 
 protected:
-    virtual void resizeEvent(QResizeEvent *event) override;
-    virtual void paintEvent(QPaintEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     std::pair<float, float>

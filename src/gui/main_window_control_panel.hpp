@@ -4,8 +4,8 @@
 #include <memory>
 #include <utility>
 
-#include <QWidget>
 #include <QFrame>
+#include <QWidget>
 
 // Include Qt generated files
 //
@@ -13,7 +13,7 @@
 
 namespace Ui {
     class MainWindowControlPanel;
-}
+} // namespace Ui
 
 class MainWindowControlPanel : public QFrame {
     Q_OBJECT
@@ -30,7 +30,6 @@ public:
     };
 
     explicit MainWindowControlPanel(QWidget* parent = nullptr);
-    ~MainWindowControlPanel() noexcept;
 
     void UpdateMessage(Message mes);
 
@@ -42,6 +41,9 @@ private:
     void AddButtonClicked();
     void RemoveButtonClicked();
     std::pair<unsigned int, bool> ReadNodeKey();
+
+    const int kNodeKeyValueLeftBound = 1;
+    const int kNodeKeyValueRightBound = 999;
 
     std::unique_ptr<Ui::MainWindowControlPanel> ui_;
 };

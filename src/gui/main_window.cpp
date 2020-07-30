@@ -5,14 +5,18 @@
 #include "2-3_tree_impl/exceptions.hpp"
 
 MainWindow::MainWindow(QWidget* parent)
-    : QMainWindow(parent), ui_(std::make_unique<Ui::MainWindow>())
+    : QMainWindow(parent),
+      ui_(std::make_unique<Ui::MainWindow>()),
+      canvas_(nullptr),
+      control_panel_(nullptr)
 {
     ui_->setupUi(this);
 
     InitCanvas();
     InitControlPanel();
-    ui_->splitter->setStretchFactor(0, 5);
-    ui_->splitter->setStretchFactor(1, 1);
+
+    ui_->splitter->setStretchFactor(0, kSplitterCanvasStretchFactor);
+    ui_->splitter->setStretchFactor(1, kSplitterControlPanelStretchFactor);
 }
 
 void MainWindow::InitControlPanel() {

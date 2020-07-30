@@ -65,13 +65,12 @@ std::pair<unsigned int, bool> MainWindowControlPanel::ReadNodeKey() {
     bool ok = false;
     auto node_key = ui_->node_key_lineedit->text().toInt(&ok);
     ui_->node_key_lineedit->clear();
-    if (ok && node_key >= 1 && node_key <= 999) {
+
+    auto is_node_key_valid = node_key >= kNodeKeyValueLeftBound &&
+                             node_key <= kNodeKeyValueRightBound;
+    if (ok && is_node_key_valid ) {
         return { node_key, true };
     }
     return { 0, false };
-}
-
-MainWindowControlPanel::~MainWindowControlPanel() noexcept {
-
 }
 

@@ -14,9 +14,14 @@ namespace two_three_tree {
 
 class Stringable {
 public:
-    virtual std::string ToString() const = 0;
-
+    Stringable() = default;
+    Stringable(const Stringable&) = default;
+    Stringable& operator=(const Stringable&) = default;
+    Stringable(Stringable&&) = default;
+    Stringable& operator=(Stringable&&) = default;
     virtual ~Stringable() = default;
+
+    virtual std::string ToString() const = 0;
 };
 
 class TwoThreeTree : public Stringable {
@@ -41,7 +46,7 @@ public:
         }
     }
 
-    virtual std::string ToString() const override;
+    std::string ToString() const override;
 
     void Add(unsigned int key);
     void Remove(unsigned int key);
@@ -58,7 +63,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream &os, const TwoThreeTree& tree);
 
-    virtual ~TwoThreeTree();
+    ~TwoThreeTree() override;
 
 private:
     class TwoThreeTreeNode;
