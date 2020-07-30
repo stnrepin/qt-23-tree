@@ -4,3 +4,6 @@ build/
 # VS code config
 .vscode/
 
+# Report files
+report/
+
